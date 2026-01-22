@@ -11,6 +11,7 @@ jobs:
     outputs:
       backend: ${{ steps.get-targets.outputs.backend }}
       frontend: ${{ steps.get-targets.outputs.frontend }}
+      complex: ${{ steps.get-targets.outputs.complex }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -22,7 +23,7 @@ jobs:
           filters: ".github/workflows/filterfiles/filter.yaml"
 
   job-backend:
-    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.backend == 'true' }}
+    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.backend == 'true' || needs.fetch-targets.outputs.complex == 'true' }}
     runs-on: ubuntu-slim
     needs: fetch-targets
     steps:
@@ -31,7 +32,7 @@ jobs:
           echo "Backend: ${{ needs.fetch-targets.outputs.backend }}"
 
   job-frontend:
-    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.frontend == 'true' }}
+    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.frontend == 'true' || needs.fetch-targets.outputs.complex == 'true' }}
     runs-on: ubuntu-slim
     needs: fetch-targets
     steps:
