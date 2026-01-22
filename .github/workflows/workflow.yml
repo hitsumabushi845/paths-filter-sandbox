@@ -27,15 +27,19 @@ jobs:
     runs-on: ubuntu-slim
     needs: fetch-targets
     steps:
-      - name: Test backend
+      - name: Test
         run: |
-          echo "targets: ${{ needs.fetch-targets.outputs }}"
+          echo "backend: ${{ needs.fetch-targets.outputs.backend }}"
+          echo "frontend: ${{ needs.fetch-targets.outputs.frontend }}"
+          echo "complex: ${{ needs.fetch-targets.outputs.complex }}"
 
   job-frontend:
     if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.frontend == 'true' || needs.fetch-targets.outputs.complex == 'true' }}
     runs-on: ubuntu-slim
     needs: fetch-targets
     steps:
-      - name: Test frontend
+      - name: Test
         run: |
-          echo "targets: ${{ needs.fetch-targets.outputs }}"
+          echo "backend: ${{ needs.fetch-targets.outputs.backend }}"
+          echo "frontend: ${{ needs.fetch-targets.outputs.frontend }}"
+          echo "complex: ${{ needs.fetch-targets.outputs.complex }}"
