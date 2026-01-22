@@ -1,0 +1,40 @@
+name: Test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  fetch-targets:
+    runs-on: ubuntu-slim
+    if: ${{ github.event_name == 'push' }}
+    outputs:
+      backend: ${{ steps.get-targets.outputs.backend }}
+      frontend: ${{ steps.get-targets.outputs.frontend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Get deploy targets
+        id: get-targets
+        uses: dorny/paths-filter@v3
+        with:
+          base: ${{ github.ref }}
+          filters: ".github/workflows/filterfiles/filter.yaml"
+
+  job-backend:
+    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.backend == 'true' }}
+    runs-on: ubuntu-slim
+    needs: fetch-targets
+    steps:
+      - name: Test backend
+        run: |
+          echo "Backend: ${{ needs.fetch-targets.outputs.backend }}"
+
+  job-frontend:
+    if: ${{ github.event == 'workflow_dispatch' || needs.fetch-targets.outputs.frontend == 'true' }}
+    runs-on: ubuntu-slim
+    needs: fetch-targets
+    steps:
+      - name: Test frontend
+        run: |
+          echo "Frontend: ${{ needs.fetch-targets.outputs.frontend }}"
